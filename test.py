@@ -1,5 +1,5 @@
 
-# Load and separate data into independent and dependent variables
+################    Load and separate data into independent and dependent variables     ################
 import pandas as pd
 
 # Load data.
@@ -10,13 +10,13 @@ y = df['logS']
 X = df.drop('logS', axis=1) # remove y variable. axis=1 means it separates by column, axis=0 would be row
 
 
-# Split data set into training and testing set
+################    Split data set into training and testing set    ################     
 from sklearn.model_selection import train_test_split
 # training set has 80% of data, test set has 20% of data
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=100) # random state is assigned specific number so that every time it is run we get the same split
 
 
-# Building the model
+################    Building the liner regression model  ################
 # Training linear regression model
 from sklearn.linear_model import LinearRegression
 
@@ -44,3 +44,31 @@ lr_results.columns = ['Method', 'Training MSE', 'Training R2', 'Test MSE', 'Test
 
 print(lr_results)
 
+
+################    Building the Random Forest model  ################
+# Training random forest model
+from sklearn.ensemble import RandomForestRegressor # y-variable is quantitative so we build regression model. If it was categorial we build classification model. So we use regressor instead of classifier
+
+rf = RandomForestRegressor(max_depth=2, random_state=100)
+rf.fit(X_train,y_train)
+
+# Applying linear regression model to make prediction on training and testing set
+y_rf_train_pred = lr.predict(X_train)
+y_rf_test_pred = lr.predict(X_test)
+
+
+# Evaluate model performance
+from sklearn.metrics import mean_squared_error, r2_score
+
+# Compare actual values with predicted values for both training and testing set
+rf_train_mse = mean_squared_error(y_train, y_rf_train_pred)
+rf_train_r2 = r2_score(y_train, y_rf_train_pred)
+
+rf_test_mse = mean_squared_error(y_test, y_rf_test_pred)
+rf_test_r2 = r2_score(y_test, y_rf_test_pred)
+
+# Create pandas data frame to show the results in a tidy way
+rf_results = pd.DataFrame(['Linear regression', rf_train_mse, rf_train_r2, rf_test_mse, rf_test_r2]).transpose()
+rf_results.columns = ['Method', 'Training MSE', 'Training R2', 'Test MSE', 'Test R2']
+
+print(rf_results)
