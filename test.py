@@ -73,6 +73,21 @@ rf_results.columns = ['Method', 'Training MSE', 'Training R2', 'Test MSE', 'Test
 ################    Compare models  ################
 # combine the two results table into one
 df_models = pd.concat([lr_results, rf_results], axis=0) # axis=0 because we want to combine in a row-wise manner
-df_models.reset_index() # to the left there's index 0 for both tables, reset these and drop the title on the column
+df_models.reset_index(drop=True) # to the left there's index 0 for both tables, reset these and drop the title on the column
 print(df_models)
 
+
+################    Data visualization of prediction results  ################
+import matplotlib.pyplot as plt
+import numpy as np
+
+plt.figure(figsize=(5,5))
+plt.scatter(x=y_train, y=y_lr_train_pred, c='green', alpha=0.3) # alpha adjustes darkness of the samples - regions that have many points are darker than regions with less points
+
+z = np.polyfit(y_train, y_lr_train_pred, 1) # make a trend line
+p = np.poly1d(z)
+plt.plot(y_train, p(y_train), c='red')
+
+plt.xlabel('Experimental Log(S)')
+plt.ylabel('Predicted Log(S) (linear model)')
+plt.show()
