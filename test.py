@@ -42,8 +42,6 @@ lr_test_r2 = r2_score(y_test, y_lr_test_pred)
 lr_results = pd.DataFrame(['Linear regression', lr_train_mse, lr_train_r2, lr_test_mse, lr_test_r2]).transpose()
 lr_results.columns = ['Method', 'Training MSE', 'Training R2', 'Test MSE', 'Test R2']
 
-print(lr_results)
-
 
 ################    Building the Random Forest model  ################
 # Training random forest model
@@ -53,8 +51,8 @@ rf = RandomForestRegressor(max_depth=2, random_state=100)
 rf.fit(X_train,y_train)
 
 # Applying linear regression model to make prediction on training and testing set
-y_rf_train_pred = lr.predict(X_train)
-y_rf_test_pred = lr.predict(X_test)
+y_rf_train_pred = rf.predict(X_train)
+y_rf_test_pred = rf.predict(X_test)
 
 
 # Evaluate model performance
@@ -68,7 +66,13 @@ rf_test_mse = mean_squared_error(y_test, y_rf_test_pred)
 rf_test_r2 = r2_score(y_test, y_rf_test_pred)
 
 # Create pandas data frame to show the results in a tidy way
-rf_results = pd.DataFrame(['Linear regression', rf_train_mse, rf_train_r2, rf_test_mse, rf_test_r2]).transpose()
+rf_results = pd.DataFrame(['Random forest', rf_train_mse, rf_train_r2, rf_test_mse, rf_test_r2]).transpose()
 rf_results.columns = ['Method', 'Training MSE', 'Training R2', 'Test MSE', 'Test R2']
 
-print(rf_results)
+
+################    Compare models  ################
+# combine the two results table into one
+df_models = pd.concat([lr_results, rf_results], axis=0) # axis=0 because we want to combine in a row-wise manner
+df_models.reset_index() # to the left there's index 0 for both tables, reset these and drop the title on the column
+print(df_models)
+
